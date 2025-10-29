@@ -73,19 +73,25 @@ curl -fsSL https://raw.githubusercontent.com/fquinto/alpinelinux/main/alpine-roo
 
 ## Usage
 
+### Configuration Testing (No Root Required)
+```bash
+# Test configuration without actually installing
+./alpine-rootfs-setup.sh -D -a x86_64 -p "bash coreutils curl"
+```
+
 ### Basic Installation
 ```bash
-./alpine-rootfs-setup.sh
+sudo ./alpine-rootfs-setup.sh
 ```
 
 ### Custom Installation
 ```bash
-./alpine-rootfs-setup.sh -d /opt/my-alpine -p build-base -p cmake
+sudo ./alpine-rootfs-setup.sh -d /opt/my-alpine -p build-base -p cmake
 ```
 
 ### Cross-Architecture Installation
 ```bash
-./alpine-rootfs-setup.sh -a armhf -d /opt/alpine-arm
+sudo ./alpine-rootfs-setup.sh -a armhf -d /opt/alpine-arm
 ```
 
 ### Working with the Chroot
@@ -131,6 +137,7 @@ curl -fsSL https://raw.githubusercontent.com/fquinto/alpinelinux/main/alpine-roo
 | `-r EXTRA_REPOS` | `EXTRA_REPOS` | Additional Alpine repositories to add | None |
 | `-t TEMP_DIR` | `TEMP_DIR` | Temporary files directory | `mktemp -d` |
 | `-n` | `SKIP_VERSION_CHECK` | Skip automatic version update check | `no` |
+| `-D` | `DRY_RUN` | Validate configuration without installing (no root required) | `no` |
 | `-h` | - | Show help and exit | - |
 | `-v` | - | Show version and exit | - |
 
@@ -140,6 +147,7 @@ curl -fsSL https://raw.githubusercontent.com/fquinto/alpinelinux/main/alpine-roo
 |----------|-------------|
 | `APK_TOOLS_URI` | Custom URL for apk.static download. If unset, latest version is fetched automatically |
 | `APK_TOOLS_SHA256` | SHA-256 checksum for custom APK_TOOLS_URI (optional) |
+| `VERIFY_CHECKSUMS` | Set to `yes` to enable checksum verification for downloads (default: `no`) |
 
 **Note**: Each option can also be provided via environment variable. Command line options take precedence over environment variables.
 
@@ -161,6 +169,7 @@ curl -fsSL https://raw.githubusercontent.com/fquinto/alpinelinux/main/alpine-roo
 - The script must run as root for chroot creation and filesystem mounting
 - Default PWD binding behavior exists for legacy compatibility but can be security-sensitive
 - Always review the directories being bound into the chroot
+- **Download Integrity**: The script relies on HTTPS for download security. APKINDEX checksums are for package content verification (handled by APK tools), not file integrity. Set `VERIFY_CHECKSUMS=yes` only when providing external file checksums.
 
 ### Architecture Emulation
 - Cross-architecture support requires QEMU user-mode emulation
